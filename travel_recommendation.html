@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelBloom - Rekomendasi Perjalanan Anda</title>
+
+    <link rel="stylesheet" href="style.css"> 
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <header class="navbar navbar-home" id="main-navbar">
+        <div class="navbar-logo">
+            <a href="#home">TravelBloom</a>
+        </div>
+        <div class="nav-links">
+            <a href="#home" onclick="showPage('home')">Home</a>
+            <a href="#about-us" onclick="showPage('about-us')">About Us</a>
+            <a href="#contact-us" onclick="showPage('contact-us')">Contact Us</a>
+        </div>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Cari: beach, temple, country">
+            <button class="search-btn" id="search-button">Search</button>
+            <button class="reset-btn" id="reset-button">Reset</button>
+        </div>
+    </header>
+
+    <main>
+
+        <section id="home" class="page-content active">
+            <div id="home-content">
+                <h1>MULAI PETUALANGAN ANDA</h1>
+                <p>Temukan destinasi sempurna Anda, mulai dari pantai berpasir, kuil kuno, hingga kota-kota metropolitan yang ramai.</p>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div id="recommendation-results">
+                </div>
+        </section>
+
+        <section id="about-us" class="page-content">
+            <h2>Tentang Kami</h2>
+            <div class="company-info">
+                <p>
+                    TravelBloom didirikan pada tahun 2023 dengan misi untuk mempermudah dan menginspirasi penjelajahan dunia. Kami percaya bahwa setiap perjalanan harus unik dan tak terlupakan. Melalui platform kami, kami menyajikan rekomendasi perjalanan yang dikurasi, memastikan Anda menemukan tempat yang sempurna untuk liburan Anda berikutnya. Kami fokus pada keberlanjutan dan pengalaman lokal autentik.
+                </p>
+            </div>
+
+            <h3>Tim Kami</h3>
+            <div class="team-members-container">
+                <div class="team-member">
+                    <div class="member-photo"></div>
+                    <h4>Aulia Rahman</h4>
+                    <p>CEO & Pendiri</p>
+                </div>
+                <div class="team-member">
+                    <div class="member-photo" style="background-image: url('placeholder-avatar2.jpg');"></div>
+                    <h4>Bima Sakti</h4>
+                    <p>Kepala Teknologi</p>
+                </div>
+                <div class="team-member">
+                    <div class="member-photo" style="background-image: url('placeholder-avatar3.jpg');"></div>
+                    <h4>Citra Dewi</h4>
+                    <p>Manajer Konten & Riset</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact-us" class="page-content">
+            <h2>Hubungi Kami</h2>
+            <form class="contact-form" id="contact-form">
+                <label for="name">Nama:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="message">Pesan Anda:</label>
+                <textarea id="message" name="message" required></textarea>
+
+                <button type="submit" id="contact-submit">Kirim Pesan</button>
+            </form>
+        </section>
+
+    </main>
+
+    <script>
+        // DOM Elements
+        const resultsDiv = document.getElementById('recommendation-results');
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        const resetButton = document.getElementById('reset-button');
+        const mainNavbar = document.getElementById('main-navbar');
+
+        // --- Task 6: Fetch Data ---
+        async function fetchTravelData() {
+            try {
+                const response = await fetch('travel_recommendation_api.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log('Data API berhasil diambil:', data); 
+                return data;
+            } catch (error) {
+                console.error('Gagal mengambil data perjalanan:', error);
+                resultsDiv.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: red;">Gagal memuat data rekomendasi. Pastikan file JSON tersedia.</p>';
+                return null;
+            }
+        }
+
+        // --- Task 7, 8, & 10: Logika Pencarian dan Tampilkan Hasil ---
+        async function searchRecommendations() {
+            const data = await fetchTravelData();
+            if (!data) return;
+
+            const keyword = searchInput.value.toLowerCase().trim();
+            resultsDiv.innerHTML = ''; 
+
+            let recommendations = [];
+
+            // Logika pencocokan keyword (Task 7 & 8)
+            if (keyword.includes('beach') || keyword.includes('beaches')) {
+                recommendations = data.beaches.map(b => ({
+                    name: b.name, description: b.description, imageUrl: b.imageUrl, timeZone: null
+                }));
+            } else if (keyword.includes('temple') || keyword.includes('temples')) {
+                recommendations = data.temples.map(t => ({
+                    name: t.name, description: t.description, imageUrl: t.imageUrl, timeZone: null
+                }));
+            } else if (keyword.includes('country') || keyword.includes('countries') ||
+                       keyword.includes('japan') || keyword.includes('brazil')) {
+                data.countries.forEach(country => {
+                    country.cities.forEach(city => {
+                        if (keyword === 'country' || keyword === 'countries' || 
+                            country.name.toLowerCase().includes(keyword) || city.name.toLowerCase().includes(keyword)) {
+                            recommendations.push({
+                                name: `${city.name}, ${country.name}`,
+                                description: city.description,
+                                imageUrl: city.imageUrl,
+                                timeZone: city.timeZone
+                            });
+                        }
+                    });
+                });
+            }
+
+            // Tampilkan hasil
+            if (recommendations.length > 0) {
+                recommendations.forEach(rec => {
+                    displayRecommendation(rec);
+                });
+                document.getElementById('recommendation-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            } else {
+                resultsDiv.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; font-style: italic; color: #888;">Tidak ditemukan rekomendasi untuk kata kunci tersebut. Coba: beach, temple, Japan, atau Brazil.</p>';
+            }
+        }
+
+        // Fungsi untuk menampilkan satu kartu rekomendasi (Task 8 & 10)
+        function displayRecommendation(rec) {
+            const card = document.createElement('div');
+            card.className = 'recommendation-card';
+
+            let timeHtml = '';
+            if (rec.timeZone) {
+                const timeElementId = `time-${rec.name.replace(/[^a-zA-Z0-9]/g, '')}`;
+                timeHtml = `<span class="country-time" id="${timeElementId}">Mengambil waktu...</span>`;
+                updateCountryTime(rec.timeZone, timeElementId);
+            }
+
+            const placeholderImage = 'placeholder.jpg'; 
+            
+            card.innerHTML = `
+                <img src="${rec.imageUrl}" alt="Gambar ${rec.name}" onerror="this.onerror=null;this.src='${placeholderImage}';">
+                <div class="card-content">
+                    <h3>${rec.name}</h3>
+                    ${timeHtml}
+                    <p>${rec.description}</p>
+                </div>
+            `;
+            resultsDiv.appendChild(card);
+        }
+
+        // Task 10 (Optional): Fungsi untuk menampilkan waktu negara
+        function updateCountryTime(timeZone, elementId) {
+            const options = { timeZone: timeZone, hour12: true, hour: 'numeric', minute: 'numeric', second: 'numeric' };
+            const timeElement = document.getElementById(elementId);
+            if (!timeElement) return;
+
+            function updateTime() {
+                const currentTime = new Date().toLocaleTimeString('en-US', options);
+                timeElement.textContent = `Waktu saat ini: ${currentTime}`;
+            }
+
+            updateTime();
+            setInterval(updateTime, 1000);
+        }
+
+        // --- Task 9: Clear Button Logic ---
+        function clearResults() {
+            resultsDiv.innerHTML = '';
+            searchInput.value = '';
+            document.getElementById('home').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- Navigasi Halaman ---
+        function showPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.style.display = (pageId === 'home') ? 'flex' : 'block';
+            }
+
+            if (pageId === 'home') {
+                mainNavbar.classList.add('navbar-home');
+                mainNavbar.classList.remove('navbar-other');
+            } else {
+                mainNavbar.classList.remove('navbar-home');
+                mainNavbar.classList.add('navbar-other');
+            }
+        }
+
+        // --- Event Listeners ---
+        searchButton.addEventListener('click', searchRecommendations);
+        resetButton.addEventListener('click', clearResults);
+
+        searchInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); 
+                searchRecommendations();
+            }
+        });
+
+        document.getElementById('contact-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('Pesan Anda telah berhasil dikirim! Kami akan menghubungi Anda segera.');
+            this.reset();
+        });
+
+        // Inisialisasi: Tampilkan Home Page
+        document.addEventListener('DOMContentLoaded', () => {
+            const initialHash = window.location.hash.substring(1);
+            if (initialHash && document.getElementById(initialHash)) {
+                showPage(initialHash);
+            } else {
+                showPage('home');
+            }
+        });
+    </script>
+</body>
+</html>

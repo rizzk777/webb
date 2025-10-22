@@ -1,0 +1,68 @@
+{
+  "countries": [
+    {
+      "id": 1,
+      "name": "Japan",
+      "cities": [
+        {
+          "name": "Kyoto",
+          "description": "Kyoto, the cultural heart of Japan, offers stunning temples, traditional gardens, and geisha districts. A must-see for history lovers.",
+          "imageUrl": "kyoto-japan.jpg",
+          "timeZone": "Asia/Tokyo"
+        },
+        {
+          "name": "Tokyo",
+          "description": "Tokyo is a dynamic mix of ultra-modern and traditional, from neon-lit skyscrapers to historic temples. A hub for technology and fashion.",
+          "imageUrl": "tokyo-japan.jpg",
+          "timeZone": "Asia/Tokyo"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Brazil",
+      "cities": [
+        {
+          "name": "Rio de Janeiro",
+          "description": "Famous for its stunning beaches like Copacabana and Ipanema, the colossal Christ the Redeemer statue, and vibrant Carnival.",
+          "imageUrl": "rio-brazil.jpg",
+          "timeZone": "America/Sao_Paulo"
+        },
+        {
+          "name": "Salvador",
+          "description": "Salvador is a city rich in Afro-Brazilian culture, history, and beautiful colonial architecture in the Pelourinho district.",
+          "imageUrl": "salvador-brazil.jpg",
+          "timeZone": "America/Bahia"
+        }
+      ]
+    }
+  ],
+  "temples": [
+    {
+      "id": 3,
+      "name": "Angkor Wat",
+      "description": "The largest religious monument in the world, a stunning testament to the Khmer Empire's architectural genius in Cambodia.",
+      "imageUrl": "angkor-wat.jpg"
+    },
+    {
+      "id": 4,
+      "name": "Borobudur",
+      "description": "A 9th-century Mahayana Buddhist Temple in Central Java, Indonesia, famous for its intricate stone carvings and peaceful stupas.",
+      "imageUrl": "borobudur.jpg"
+    }
+  ],
+  "beaches": [
+    {
+      "id": 5,
+      "name": "Whitehaven Beach",
+      "description": "Located in the Whitsunday Islands, Australia, known for its pure white silica sand and turquoise waters.",
+      "imageUrl": "whitehaven-beach.jpg"
+    },
+    {
+      "id": 6,
+      "name": "Malibu Beach",
+      "description": "A classic Southern California beach, popular for surfing, sunbathing, and its iconic pier in the USA.",
+      "imageUrl": "malibu-beach.jpg"
+    }
+  ]
+}
